@@ -19,8 +19,8 @@ struct EmailHTMLTests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            subject: "Test Email")
-        {
+            subject: "Test Email"
+        ) {
             HTMLDocument {
                 div {
                     h1 { "Hello, World!" }
@@ -32,7 +32,6 @@ struct EmailHTMLTests {
                 meta(charset: .utf8)()
             }
         }
-        
 
         #expect(email.to.count == 1)
         #expect(email.to[0].rawValue == "recipient@example.com")
@@ -57,7 +56,7 @@ struct EmailHTMLTests {
         let email = try Email(
             to: [
                 EmailAddress("user1@example.com"),
-                EmailAddress("user2@example.com")
+                EmailAddress("user2@example.com"),
             ],
             from: EmailAddress("noreply@company.com"),
             cc: [EmailAddress("cc@example.com")],
@@ -81,14 +80,14 @@ struct EmailHTMLTests {
                         a(href: .init(rawValue: "https://example.com/verify")) {
                             "Verify your email"
                         }
-                            .display(.inlineBlock)
-                            .padding(.rem(1))
-                            .backgroundColor(.blue)
-                            .color(.white)
-                            .borderRadius(.px(4))
-                            .textDecoration(TextDecoration.none)
+                        .display(.inlineBlock)
+                        .padding(.rem(1))
+                        .backgroundColor(.blue)
+                        .color(.white)
+                        .borderRadius(.px(4))
+                        .textDecoration(TextDecoration.none)
                     }
-                        .padding(.rem(2))
+                    .padding(.rem(2))
                 } head: {
                     title { "Welcome Email" }
                     meta(charset: .utf8)()
@@ -139,7 +138,7 @@ struct EmailHTMLTests {
                             " for more info."
                         }
                     }
-                        .padding(.rem(2))
+                    .padding(.rem(2))
                 } head: {
                     title { "Newsletter" }
                     meta(charset: .utf8)()
@@ -183,7 +182,7 @@ struct EmailHTMLTests {
             },
             additionalHeaders: [
                 .init(name: "X-Priority", value: "1"),
-                .init(name: "X-Mailer", value: "swift-email")
+                .init(name: "X-Mailer", value: "swift-email"),
             ]
         )
 
@@ -285,52 +284,54 @@ struct EmailHTMLTests {
             replyTo: EmailAddress("support@example.com"),
             subject: "Welcome to Example.com - Please verify your email",
             text: """
-            Hi \(userName),
+                Hi \(userName),
 
-            Welcome to Example.com!
+                Welcome to Example.com!
 
-            Please verify your email by clicking this link:
-            \(verificationUrl)
+                Please verify your email by clicking this link:
+                \(verificationUrl)
 
-            If you didn't sign up for this account, please ignore this email.
+                If you didn't sign up for this account, please ignore this email.
 
-            Best regards,
-            The Example.com Team
-            """,
+                Best regards,
+                The Example.com Team
+                """,
             html: {
                 HTMLDocument {
                     div {
                         h1 { "Welcome to Example.com!" }
                             .fontSize(.rem(2))
                         p { "Hi \(userName)," }
-                        p { "Thank you for signing up. Please verify your email address by clicking the button below:" }
-                            .marginBottom(.rem(1.5))
+                        p {
+                            "Thank you for signing up. Please verify your email address by clicking the button below:"
+                        }
+                        .marginBottom(.rem(1.5))
                         p {
                             a(href: .init(rawValue: verificationUrl)) {
                                 "Verify Email Address"
                             }
-                                .display(.inlineBlock)
-                                .padding(vertical: .rem(0.75), horizontal: .rem(1.5))
-                                .backgroundColor(.blue)
-                                .color(.white)
-                                .textDecoration(TextDecoration.none)
-                                .borderRadius(.px(4))
+                            .display(.inlineBlock)
+                            .padding(vertical: .rem(0.75), horizontal: .rem(1.5))
+                            .backgroundColor(.blue)
+                            .color(.white)
+                            .textDecoration(TextDecoration.none)
+                            .borderRadius(.px(4))
                         }
                         p {
                             "If you didn't sign up for this account, please ignore this email."
                         }
-                            .marginTop(.rem(2))
-                            .fontSize(.rem(0.875))
+                        .marginTop(.rem(2))
+                        .fontSize(.rem(0.875))
                         p {
                             "Best regards,"
                             br()
                             "The Example.com Team"
                         }
-                            .fontSize(.rem(0.875))
+                        .fontSize(.rem(0.875))
                     }
-                        .maxWidth(.px(600))
-                        .margin(horizontal: .auto)
-                        .padding(.rem(2))
+                    .maxWidth(.px(600))
+                    .margin(horizontal: .auto)
+                    .padding(.rem(2))
                 } head: {
                     title { "Welcome to Example.com" }
                     meta(charset: .utf8)()
@@ -339,7 +340,7 @@ struct EmailHTMLTests {
             },
             additionalHeaders: [
                 .init(name: "X-Email-Type", value: "verification"),
-                .init(name: "X-Priority", value: "1")
+                .init(name: "X-Priority", value: "1"),
             ]
         )
 
@@ -376,10 +377,11 @@ struct EmailHTMLTests {
                 title: "Tips and Tricks",
                 summary: "Learn how to get the most out of our platform...",
                 url: "https://example.com/blog/tips"
-            )
+            ),
         ]
 
-        let plainText = articles.map { "• \($0.title)\n  \($0.summary)\n  Read more: \($0.url)" }.joined(separator: "\n\n")
+        let plainText = articles.map { "• \($0.title)\n  \($0.summary)\n  Read more: \($0.url)" }
+            .joined(separator: "\n\n")
 
         let email = try Email(
             to: [EmailAddress("subscriber@example.com")],
@@ -406,8 +408,8 @@ struct EmailHTMLTests {
                                         .textDecoration(TextDecoration.none)
                                 }
                             }
-                                .padding(bottom: .rem(1.5))
-                                .marginBottom(.rem(1.5))
+                            .padding(bottom: .rem(1.5))
+                            .marginBottom(.rem(1.5))
                         }
 
                         div {
@@ -416,15 +418,17 @@ struct EmailHTMLTests {
                             }
                             p {
                                 "Questions? "
-                                a(href: .init(rawValue: "mailto:support@example.com")) { "Contact us" }
+                                a(href: .init(rawValue: "mailto:support@example.com")) {
+                                    "Contact us"
+                                }
                             }
                         }
-                            .fontSize(.rem(0.875))
-                            .marginTop(.rem(2))
+                        .fontSize(.rem(0.875))
+                        .marginTop(.rem(2))
                     }
-                        .maxWidth(.px(600))
-                        .margin(horizontal: .auto)
-                        .padding(.rem(2))
+                    .maxWidth(.px(600))
+                    .margin(horizontal: .auto)
+                    .padding(.rem(2))
                 } head: {
                     title { "Monthly Newsletter" }
                     meta(charset: .utf8)()
