@@ -36,7 +36,7 @@ extension AppleMail {
     /// ```
     public struct Message: CustomStringConvertible {
         private let message: RFC_5322.Message
-        private let universalUUID: String
+        private let universalUUID: UUID
 
         /// Creates an Apple Mail message from an Email
         ///
@@ -48,7 +48,7 @@ extension AppleMail {
         /// - Throws: If email address parsing fails
         public init(
             from email: Email,
-            universalUUID: String = UUID().uuidString
+            universalUUID: UUID = UUID()
         ) throws {
             // Convert Email to RFC_5322.Message (from swift-email-type)
             let baseMessage = try RFC_5322.Message(from: email)
@@ -57,7 +57,7 @@ extension AppleMail {
             var headers = baseMessage.additionalHeaders
             headers["Mime-Version"] = "1.0 (Mac OS X Mail 16.0 \\(3826.700.71\\))"
             headers["X-Apple-Base-Url"] = "x-msg://1/"
-            headers["X-Universally-Unique-Identifier"] = universalUUID
+            headers["X-Universally-Unique-Identifier"] = universalUUID.uuidString
             headers["X-Apple-Mail-Remote-Attachments"] = "YES"
             headers["X-Apple-Windows-Friendly"] = "1"
             headers["X-Apple-Mail-Signature"] = ""

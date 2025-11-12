@@ -47,21 +47,21 @@ struct AppleMailTests {
     
     @Test("Create AppleMail.Message with custom UUID")
     func createAppleMailMessageCustomUUID() throws {
-        let customUUID = "12345678-1234-1234-1234-123456789ABC"
+        let customUUID = UUID(uuidString: "12345678-1234-1234-1234-123456789ABC")!
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
             subject: "Test",
             body: "Test content"
         )
-        
+
         let appleEmail = try AppleMail.Message(
             from: email,
             universalUUID: customUUID
         )
         let emlContent = appleEmail.description
-        
-        #expect(emlContent.contains("X-Universally-Unique-Identifier: \(customUUID)"))
+
+        #expect(emlContent.contains("X-Universally-Unique-Identifier: \(customUUID.uuidString)"))
     }
     
     @Test("AppleMail.Message with HTML content")
