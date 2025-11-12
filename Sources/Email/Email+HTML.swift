@@ -40,7 +40,7 @@ extension Email {
     ///   - bcc: Blind carbon copy addresses (optional)
     ///   - subject: Email subject
     ///   - html: HTML content builder closure
-    ///   - headers: Additional custom headers (optional)
+    ///   - additionalHeaders: Additional custom headers (optional)
     /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
     public init(
         to: [EmailAddress],
@@ -50,7 +50,7 @@ extension Email {
         bcc: [EmailAddress]? = nil,
         subject: String,
         @HTMLBuilder html: () -> any HTML,
-        headers: [RFC_5322.HeaderName: String] = [:]
+        additionalHeaders: [RFC_5322.Header] = []
     ) throws {
         let bytes = AnyHTML(html()).render()
         try self.init(
@@ -61,7 +61,7 @@ extension Email {
             bcc: bcc,
             subject: subject,
             body: .html(Data(bytes), charset: .utf8),
-            headers: headers
+            additionalHeaders: additionalHeaders
         )
     }
 
@@ -100,7 +100,7 @@ extension Email {
     ///   - subject: Email subject
     ///   - text: Plain text content (fallback for clients that don't support HTML)
     ///   - html: HTML content builder closure
-    ///   - headers: Additional custom headers (optional)
+    ///   - additionalHeaders: Additional custom headers (optional)
     /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
     public init(
         to: [EmailAddress],
@@ -111,7 +111,7 @@ extension Email {
         subject: String,
         text: String,
         @HTMLBuilder html: () -> any HTML,
-        headers: [RFC_5322.HeaderName: String] = [:]
+        additionalHeaders: [RFC_5322.Header] = []
     ) throws {
         let htmlBytes = AnyHTML(html()).render()
         let htmlString = String(decoding: htmlBytes, as: UTF8.self)
@@ -123,7 +123,7 @@ extension Email {
             bcc: bcc,
             subject: subject,
             body: .multipart(try .alternative(textContent: text, htmlContent: htmlString)),
-            headers: headers
+            additionalHeaders: additionalHeaders
         )
     }
 }

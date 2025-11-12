@@ -122,9 +122,9 @@ struct AppleMailTests {
             bcc: [EmailAddress("bcc@example.com")],
             subject: "Complete Email",
             body: "Test body",
-            headers: [
-                "X-Custom-Header": "custom-value",
-                "X-Priority": "1"
+            additionalHeaders: [
+                .init(name: "X-Custom-Header", value: "custom-value"),
+                .init(name: "X-Priority", value: "1")
             ]
         )
         
