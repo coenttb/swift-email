@@ -50,7 +50,7 @@ extension Email {
         bcc: [EmailAddress]? = nil,
         subject: String,
         @HTMLBuilder html: () -> any HTML,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         let bytes = AnyHTML(html()).render()
         try self.init(
@@ -60,7 +60,7 @@ extension Email {
             cc: cc,
             bcc: bcc,
             subject: subject,
-            body: .html(Data(bytes), charset: "UTF-8"),
+            body: .html(Data(bytes), charset: .utf8),
             headers: headers
         )
     }
@@ -111,7 +111,7 @@ extension Email {
         subject: String,
         text: String,
         @HTMLBuilder html: () -> any HTML,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         let htmlBytes = AnyHTML(html()).render()
         let htmlString = String(decoding: htmlBytes, as: UTF8.self)
@@ -149,7 +149,7 @@ extension Email.Body {
     ///   - content: HTML content builder closure
     /// - Returns: An HTML email body
     public static func html(
-        charset: String = "UTF-8",
+        charset: RFC_2045.Charset = .utf8,
         @HTMLBuilder content: () -> any HTML
     ) -> Self {
         let bytes = AnyHTML(content()).render()
