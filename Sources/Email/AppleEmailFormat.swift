@@ -6,16 +6,11 @@
 //
 
 import Foundation
+import RFC_2046
 import RFC_5322
 
 public struct AppleEmail: CustomStringConvertible {
-    private let htmlContent: String
-    private let from: String
-    private let subject: String
-    private let date: Date
-
-    private let boundaryUUID: String
-    private let messageUUID: String
+    private let message: RFC_5322.Message
     private let universalUUID: String
 
     public init(
@@ -23,17 +18,56 @@ public struct AppleEmail: CustomStringConvertible {
         from: String,
         subject: String = "",
         date: Date = Date(),
-        boundary: String = UUID().uuidString,
-        message: String = UUID().uuidString,
+        boundary: String? = nil,
+        messageId: String? = nil,
         universal: String = UUID().uuidString
-    ) {
-        self.htmlContent = htmlContent
-        self.from = from
-        self.subject = subject
-        self.date = date
+    ) throws {
+        let plainTextContent = try! String(htmlContent, stripHTML: true)
 
-        self.boundaryUUID = boundary
-        self.messageUUID = message
+        // Create multipart body using RFC 2046
+        let multipart = try RFC_2046.Multipart(
+            subtype: .alternative,
+            parts: [
+                .init(
+                    contentType: .textPlainUTF8,
+                    transferEncoding: .sevenBit,
+                    text: plainTextContent
+                ),
+                .init(
+                    contentType: .textHTMLUTF8,
+                    transferEncoding: .sevenBit,
+                    text: htmlContent
+                )
+            ],
+            boundary: boundary.map { "Apple-Mail=_\($0)" }
+        )
+
+        // Parse RFC 5322 email address
+        let fromAddress = try RFC_5322.EmailAddress(from)
+
+        // Generate or use provided message ID
+        let finalMessageId = messageId ?? RFC_5322.Message.generateMessageId(from: fromAddress)
+
+        // Create RFC 5322 message with Apple-specific headers
+        self.message = RFC_5322.Message(
+            from: fromAddress,
+            to: [], // Apple Mail drafts don't require recipients
+            subject: subject,
+            date: date,
+            messageId: finalMessageId,
+            body: multipart.render(),
+            additionalHeaders: [
+                "Content-Type": multipart.contentType.headerValue,
+                "Mime-Version": "1.0 (Mac OS X Mail 16.0 \\(3826.700.71\\))",
+                "X-Apple-Base-Url": "x-msg://1/",
+                "X-Universally-Unique-Identifier": universal,
+                "X-Apple-Mail-Remote-Attachments": "YES",
+                "X-Apple-Windows-Friendly": "1",
+                "X-Apple-Mail-Signature": "",
+                "X-Uniform-Type-Identifier": "com.apple.mail-draft"
+            ]
+        )
+
         self.universalUUID = universal
     }
 
@@ -42,56 +76,22 @@ public struct AppleEmail: CustomStringConvertible {
         from: String,
         subject: String = "",
         date: Date = Date()
-    ) {
-        self.htmlContent = try! String(emailDocument)
-        self.from = from
-        self.subject = subject
-        self.date = date
-
-        self.boundaryUUID = UUID().uuidString
-        self.messageUUID = UUID().uuidString
-        self.universalUUID = UUID().uuidString
+    ) throws {
+        let htmlContent = try! String(emailDocument)
+        try self.init(
+            htmlContent: htmlContent,
+            from: from,
+            subject: subject,
+            date: date
+        )
     }
 
-    public var description: String { emlContent }
-
-    private var emlContent: String {
-        let plainTextContent = try! String(htmlContent, stripHTML: true)
-
-        return """
-            Content-Type: multipart/alternative;
-                boundary="Apple-Mail=_\(boundaryUUID)"
-            Subject: \(subject)
-            Mime-Version: 1.0 (Mac OS X Mail 16.0 \\(3826.700.71\\))
-            X-Apple-Base-Url: x-msg://1/
-            X-Universally-Unique-Identifier: \(universalUUID)
-            X-Apple-Mail-Remote-Attachments: YES
-            From: \(from)
-            X-Apple-Windows-Friendly: 1
-            Date: \(RFC_5322.Date.string(from: date))
-            X-Apple-Mail-Signature:
-            Message-Id: <\(messageUUID)@\(emailDomain)>
-            X-Uniform-Type-Identifier: com.apple.mail-draft
-
-
-            --Apple-Mail=_\(boundaryUUID)
-            Content-Transfer-Encoding: 7bit
-            Content-Type: text/plain;
-                charset=us-ascii
-
-            \(plainTextContent)
-
-            --Apple-Mail=_\(boundaryUUID)
-            Content-Transfer-Encoding: 7bit
-            Content-Type: text/html;
-                charset=us-ascii
-
-            \(htmlContent)
-            --Apple-Mail=_\(boundaryUUID)--
-            """
+    public var description: String {
+        message.render()
     }
 
-    private var emailDomain: String {
-        from.components(separatedBy: "@").last ?? "example.com"
+    /// The underlying RFC 5322 message
+    public var rfc5322Message: RFC_5322.Message {
+        message
     }
 }
