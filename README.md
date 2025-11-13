@@ -114,13 +114,15 @@ let email = try Email(
 
 ### Multipart Email (Text + HTML)
 
+When you provide both `text:` and `html:` parameters, the email automatically becomes multipart/alternative. Email clients that support HTML will display the HTML version, while clients that only support plain text will display the text version.
+
 ```swift
 let email = try Email(
     to: [EmailAddress("subscriber@example.com")],
     from: EmailAddress("newsletter@example.com"),
     subject: "Monthly Newsletter",
-    text: "Welcome! Visit https://example.com for more info.",
-    html: {
+    text: "Welcome! Visit https://example.com for more info.",  // Plain text fallback
+    html: {  // Rich HTML version
         HTMLDocument {
             div {
                 h1 { "Welcome!" }
@@ -153,10 +155,29 @@ let email = try Email(
 Create newsletters with dynamic content using HTMLForEach:
 
 ```swift
-struct Article {
+struct Article: HTML {
     let title: String
     let summary: String
     let url: String
+
+    var body: some HTML {
+        div {
+            h2 { title }
+                .fontSize(.rem(1.5))
+                .marginBottom(.rem(0.5))
+
+            p { summary }
+                .marginBottom(.rem(1))
+                .color(.gray700)
+
+            a(href: .init(rawValue: url)) { "Read more →" }
+                .color(.blue)
+                .textDecoration(TextDecoration.none)
+        }
+        .padding(bottom: .rem(1.5))
+        .marginBottom(.rem(1.5))
+        .borderBottom(width: .px(1), color: .gray200)
+    }
 }
 
 let articles: [Article] = [
@@ -185,24 +206,7 @@ let email = try Email(
                     .fontSize(.rem(2.5))
                     .marginBottom(.rem(2))
 
-                HTMLForEach(articles) { article in
-                    div {
-                        h2 { article.title }
-                            .fontSize(.rem(1.5))
-                            .marginBottom(.rem(0.5))
-
-                        p { article.summary }
-                            .marginBottom(.rem(1))
-                            .color(.gray700)
-
-                        a(href: .init(rawValue: article.url)) { "Read more →" }
-                            .color(.blue)
-                            .textDecoration(TextDecoration.none)
-                    }
-                    .padding(bottom: .rem(1.5))
-                    .marginBottom(.rem(1.5))
-                    .borderBottom(width: .px(1), color: .gray200)
-                }
+                HTMLForEach(articles)
 
                 p { "Thanks for being a subscriber!" }
                     .marginTop(.rem(2))
