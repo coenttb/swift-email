@@ -216,7 +216,9 @@ struct ReadmeVerificationTests {
                             .fontSize(.rem(0.875))
                             .color(.gray600)
                     }
-                    .fontFamily(.withFallback(["system-ui", "-apple-system"], fallback: .sansSerif))
+                    .fontFamily(
+                        .withFallback(["system-ui", "-apple-system"], fallback: .sansSerif)
+                    )
                     .maxWidth(.px(600))
                     .margin(horizontal: .auto)
                     .padding(.rem(2))
