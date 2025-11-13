@@ -5,7 +5,7 @@
 //  Created by Coen ten Thije Boonkkamp on 12/11/2025.
 //
 
-import EmailType
+import Email_Type
 import Foundation
 import HTML
 
@@ -109,12 +109,10 @@ extension Email {
         cc: [EmailAddress]? = nil,
         bcc: [EmailAddress]? = nil,
         subject: String,
-        text: String,
+        additionalHeaders: [RFC_5322.Header] = [],
         @HTMLBuilder html: () -> any HTML,
-        additionalHeaders: [RFC_5322.Header] = []
+        @StringBuilder text: () -> String
     ) throws {
-        let htmlBytes = AnyHTML(html()).render()
-        let htmlString = String(decoding: htmlBytes, as: UTF8.self)
         try self.init(
             to: to,
             from: from,
@@ -122,7 +120,7 @@ extension Email {
             cc: cc,
             bcc: bcc,
             subject: subject,
-            body: .multipart(try .alternative(textContent: text, htmlContent: htmlString)),
+            body: .multipart(try .alternative(textContent: text(), htmlContent: String(html()))),
             additionalHeaders: additionalHeaders
         )
     }

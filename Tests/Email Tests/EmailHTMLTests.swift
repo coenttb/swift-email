@@ -102,7 +102,7 @@ struct EmailHTMLTests {
         #expect(email.to.count == 2)
         #expect(email.cc?.count == 1)
         #expect(email.bcc?.count == 1)
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Custom-Header")] == "test-value")
+        #expect(email.additionalHeaders["X-Custom-Header"] == "test-value")
 
         if case .html(let data, _) = email.body {
             let content = String(data: data, encoding: .utf8)!
@@ -187,8 +187,8 @@ struct EmailHTMLTests {
         )
 
         #expect(email.replyTo?.rawValue == "reply@example.com")
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Priority")] == "1")
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Mailer")] == "swift-email")
+        #expect(email.additionalHeaders["X-Priority"] == "1")
+        #expect(email.additionalHeaders["X-Mailer"] == "swift-email")
     }
 
     // MARK: - Email.Body Builder Tests
@@ -347,7 +347,7 @@ struct EmailHTMLTests {
         #expect(email.to[0].rawValue == "john.doe@example.com")
         #expect(email.replyTo?.rawValue == "support@example.com")
         #expect(email.subject.contains("verify"))
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Email-Type")] == "verification")
+        #expect(email.additionalHeaders["X-Email-Type"] == "verification")
 
         if case .multipart(let multipart) = email.body {
             let rendered = multipart.render()

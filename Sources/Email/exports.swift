@@ -6,7 +6,7 @@
 //
 
 @_exported import Dependencies
-@_exported import EmailType
+@_exported import Email_Type
 @_exported import HTML
 @_exported import HTMLMarkdown
 @_exported import HTMLTheme

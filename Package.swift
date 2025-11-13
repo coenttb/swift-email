@@ -36,7 +36,7 @@ let package = Package(
         .target(
             name: "Email",
             dependencies: [
-                .product(name: "Email Type", package: "swift-email-type", moduleAliases: ["Email": "EmailType"]),
+                .product(name: "Email Type", package: "swift-email-type"),
                 .product(name: "RFC_5322", package: "swift-rfc-5322"),
                 .product(name: "HTML", package: "swift-html"),
                 .product(name: "HTMLTheme", package: "swift-html"),

@@ -283,8 +283,8 @@ struct ReadmeVerificationTests {
         #expect(email.replyTo?.rawValue == "support@company.com")
         #expect(email.cc?.count == 1)
         #expect(email.bcc?.count == 1)
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Priority")] == "1")
-        #expect(email.additionalHeaders[RFC_5322.Header.Name("X-Mailer")] == "swift-email")
+        #expect(email.additionalHeaders["X-Priority"] == "1")
+        #expect(email.additionalHeaders["X-Mailer"] == "swift-email")
 
         if case .multipart(let multipart) = email.body {
             let rendered = multipart.render()

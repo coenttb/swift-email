@@ -5,7 +5,7 @@
 //  Created by Coen ten Thije Boonkkamp on 21/07/2025.
 //
 
-import EmailType
+import Email_Type
 import Foundation
 import RFC_5322
 
