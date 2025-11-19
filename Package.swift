@@ -23,7 +23,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-email-type", from: "0.2.1"),
+        .package(url: "https://github.com/swift-standards/swift-email-standard", from: "0.2.1"),
         .package(url: "https://github.com/swift-standards/swift-rfc-5322", from: "0.1.0"),
         .package(url: "https://github.com/coenttb/swift-html", exact: "0.11.1"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
@@ -36,7 +36,7 @@ let package = Package(
         .target(
             name: "Email",
             dependencies: [
-                .product(name: "Email Type", package: "swift-email-type"),
+                .product(name: "Email Type", package: "swift-email-standard"),
                 .product(name: "RFC_5322", package: "swift-rfc-5322"),
                 .product(name: "HTML", package: "swift-html"),
                 .product(name: "HTMLTheme", package: "swift-html"),
